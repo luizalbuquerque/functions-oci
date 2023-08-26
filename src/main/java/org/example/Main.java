@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.example.Model.OfferModel;
 import org.example.config.ConfigLoader;
 import org.example.config.DatabaseManager;
+import org.example.resource.functions.CreateOfferFunction;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

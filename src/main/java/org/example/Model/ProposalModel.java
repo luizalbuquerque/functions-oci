@@ -11,11 +11,11 @@ import java.util.Date;
 public class ProposalModel {
     private String assetTypeCode;
     private String indexCode;
-    private int rateFloatingPercentage;
-    private int interestRateSpreadPercentage;
+    private double rateFloatingPercentage; // Alterado para double
+    private double interestRateSpreadPercentage; // Alterado para double
     private String interestRateCriteriaTypeCode;
-    private int minimumSpreadPercentage;
-    private int maximumSpreadPercentage;
+    private double minimumSpreadPercentage; // Alterado para double
+    private double maximumSpreadPercentage; // Alterado para double
     private double issueUnitPriceValue;
     private double minimumIssueVolumeValue;
     private double maximumIssueVolumeValue;

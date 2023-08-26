@@ -18,6 +18,11 @@ public class ValidationUtils {
         return distributor.length() <= 8;
     }
 
+// Método mais clean, test
+//    public static boolean isValidDateFormat(String date) {
+//        return tryParseDate(date) != null;
+//    }
+
     public static boolean isValidDateFormat(String date) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -153,14 +158,6 @@ public class ValidationUtils {
         return true; // Se não cair em nenhuma das condições acima, considera válido
     }
 
-    // Método de decrypta o password
-    public static String decryptDbPassword(String dbPwdCypher) {
-        // Implementar a lógica de decodificação da senha do banco de dados
-        // Exemplo de pseudocódigo usando Java Cipher API:
-        // return yourDecryptionMethod(dbPwdCypher);
-        return "decoded_password";
-    }
-
     public static String basicAuthHeader(String username, String password) {
         String credentials = username + ":" + password;
         String encodedCredentials = java.util.Base64.getEncoder().encodeToString(credentials.getBytes());
@@ -292,16 +289,34 @@ public class ValidationUtils {
         return businessErrors;
     }
 
-    static JsonObject parseJsonResponse(String responseBody) {
-        JsonObject jsonObject = new JsonObject(); // biblioteca Gson para análise JSON
-        try {
-            JsonParser parser = new JsonParser();
-            jsonObject = parser.parse(responseBody).getAsJsonObject();
-        } catch (JsonParseException e) {
-            // Lidar com erros de análise de JSON, se necessário
-            e.printStackTrace();
+
+    public static Map<String, String> getDeleteValidation(int offerId) {
+        Map<String, String> errors = new HashMap<>();
+
+        if (offerId <= 0) {
+            errors.put("offerId", "Offer ID is not valid.");
         }
-        return jsonObject;
+
+        return errors;
+    }
+
+    public static Map<String, String> getUpdateValidationErrors(List<DistributorModel> distributors, ProposalModel proposal) {
+        Map<String, String> errors = new HashMap<>();
+
+        // Aqui você pode adicionar suas validações específicas.
+        // Por exemplo:
+
+        if (proposal == null) {
+            errors.put("proposal", "Proposal cannot be null.");
+        }
+
+        if (distributors == null || distributors.isEmpty()) {
+            errors.put("distributors", "At least one distributor is required.");
+        }
+
+        // Continue com as validações conforme necessário...
+
+        return errors;
     }
 
 }

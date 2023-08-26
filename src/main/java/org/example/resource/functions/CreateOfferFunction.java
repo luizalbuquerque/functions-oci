@@ -1,43 +1,41 @@
-package org.example;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+package org.example.resource.functions;
 
 import org.example.Model.DistributorModel;
 import org.example.Model.ProposalModel;
 import org.example.Model.OfferModel;
 import org.example.config.ConfigLoader;
 import org.example.config.DatabaseManager;
+import org.example.dao.OfferDAO;
 import org.example.util.ValidationUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CreateOfferFunction {
 
-    private final ConfigLoader configLoader;
+    private final DatabaseManager dbManager;
+    private final OfferDAO offerDAO;
 
     public CreateOfferFunction(ConfigLoader configLoader, DatabaseManager dbManager) {
-        this.configLoader = configLoader;
+        this.dbManager = dbManager;
+        this.offerDAO = new OfferDAO(dbManager);
     }
 
     public String handleRequest(OfferModel offerModel) {
-
         Map<String, Object> result = new HashMap<>();
         ProposalModel proposal = offerModel.getProposal();
         List<DistributorModel> distributors = offerModel.getDistributors();
 
         try {
-            // Carregando as configurações do banco de dados
-            loadDatabaseConfig();
-
             Map<String, String> validationErrors = validateInputValues(distributors, proposal);
 
             if (validationErrors.isEmpty()) {
-                // Suponha que a inserção foi bem-sucedida (isso é apenas uma simulação)
-                int affectedRows = 1; // suponha que um registro foi inserido com sucesso
+                int affectedRows = offerDAO.insertOffer(distributors, proposal);
 
                 if (affectedRows > 0) {
                     result.put("success", true);
-                    result.put("message", "Record inserted successfully (simulated).");
+                    result.put("message", "Record inserted successfully.");
                 } else {
                     result.put("success", false);
                     result.put("error_message", "Failed to insert record.");
@@ -46,9 +44,6 @@ public class CreateOfferFunction {
                 result.put("success", false);
                 result.put("validation_errors", validationErrors);
             }
-            /*
-            }
-            */
         } catch (Exception e) {
             handleException(result, e);
         }
@@ -64,9 +59,5 @@ public class CreateOfferFunction {
         e.printStackTrace();
         result.put("success", false);
         result.put("error_message", e.getMessage());
-    }
-
-    private void loadDatabaseConfig() throws Exception {
-        configLoader.load();
     }
 }

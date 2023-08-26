@@ -1,0 +1,11 @@
+schema_version: 20180708
+name: blc-distemiss-fn-include-offer
+version: 0.0.20
+runtime: java17
+build_image: fnproject/fn-java-fdk-build:jdk17-1.0.177
+run_image: fnproject/fn-java-fdk:jre17-1.0.177
+cmd: br.com.b3.template.fn.CreateOfferFunction::handleRequest
+triggers:
+  - name: create-offer-trigger
+    type: http
+    source: /create-offer-trigger

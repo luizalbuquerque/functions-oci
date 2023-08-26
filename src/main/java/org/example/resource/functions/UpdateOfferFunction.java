@@ -1,19 +1,26 @@
-package org.example;
+package org.example.resource.functions;
+
+import org.example.Model.DistributorModel;
+import org.example.Model.ProposalModel;
+import org.example.Model.OfferModel;
+import org.example.config.DatabaseManager;
+import org.example.dao.OfferDAO;
+import org.example.util.ValidationUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.example.Model.DistributorModel;
-import org.example.Model.ProposalModel;
-import org.example.Model.OfferModel;
-import org.example.util.ValidationUtils;
+public class UpdateOfferFunction {
 
-public class CreateOfferFunction_semBanco {
+    private final OfferDAO offerDAO;
 
-    public String handleRequest(OfferModel offerModel) {
+    public UpdateOfferFunction(DatabaseManager dbManager) {
+        this.offerDAO = new OfferDAO(dbManager);
+    }
+
+    public Map<String, Object> handleRequest(OfferModel offerModel) {
         Map<String, Object> result = new HashMap<>();
-
         ProposalModel proposal = offerModel.getProposal();
         List<DistributorModel> distributors = offerModel.getDistributors();
 
@@ -21,34 +28,28 @@ public class CreateOfferFunction_semBanco {
             Map<String, String> validationErrors = validateInputValues(distributors, proposal);
 
             if (validationErrors.isEmpty()) {
-                // Suponha que a inserção foi bem-sucedida (isso é apenas uma simulação)
-                int affectedRows = 1; // suponha que um registro foi inserido com sucesso
+                int affectedRows = offerDAO.updateOffer(offerModel);
 
                 if (affectedRows > 0) {
                     result.put("success", true);
-                    result.put("message", "Record inserted successfully (simulated).");
+                    result.put("message", "Record updated successfully.");
                 } else {
                     result.put("success", false);
-                    result.put("error_message", "Failed to insert record.");
+                    result.put("error_message", "Failed to update record.");
                 }
             } else {
                 result.put("success", false);
                 result.put("validation_errors", validationErrors);
             }
         } catch (Exception e) {
-            handleException(result, e);
+            result.put("success", false);
+            result.put("error_message", e.getMessage());
         }
 
-        return result.toString();
+        return result;
     }
 
     private Map<String, String> validateInputValues(List<DistributorModel> distributors, ProposalModel proposal) {
-        return ValidationUtils.getBusinessValidationErrors(distributors, proposal);
-    }
-
-    private void handleException(Map<String, Object> result, Exception e) {
-        e.printStackTrace();
-        result.put("success", false);
-        result.put("error_message", e.getMessage());
+        return ValidationUtils.getUpdateValidationErrors(distributors, proposal);
     }
 }
