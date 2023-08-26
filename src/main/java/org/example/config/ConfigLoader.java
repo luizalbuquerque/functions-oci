@@ -28,4 +28,16 @@ public class ConfigLoader {
     public String getProperty(String key, String defaultValue) {
         return properties.getProperty(key, defaultValue);
     }
+
+    public void displayDatabaseInfo() {
+        String dbName = getProperty("database.name");
+        String dbUser = getProperty("database.user");
+        String dbPassword = getProperty("database.password");
+        String dbUrl = getProperty("database.url");
+
+        System.out.println("Database Name: " + dbName);
+        System.out.println("Database User: " + dbUser);
+        System.out.println("Database Pass: " + dbPassword);
+        System.out.println("Database url: " + dbUrl);
+    }
 }

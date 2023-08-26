@@ -1,5 +1,6 @@
 package org.example.util;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
@@ -166,6 +167,7 @@ public class ValidationUtils {
         return "Basic " + encodedCredentials;
     }
 
+    // Itens obrigatórios
     public static Map<String, Boolean> getMandatoryFields() {
         Map<String, Boolean> mandatoryFields = new HashMap<>();
 
@@ -182,7 +184,8 @@ public class ValidationUtils {
         Map<String, String> businessErrors = new HashMap<>();
         Map<String, Boolean> mandatoryFields = getMandatoryFields();
 
-        JSONObject jsonObject = new JSONObject(distributorsArray.toString()); // Ou proposalObject.toString() se necessário
+        String proposalJson = new Gson().toJson(proposalObject);
+        JSONObject jsonObject = new JSONObject(proposalJson);
 
         mandatoryFields.forEach((fieldName, isMandatory) -> {
             if (isMandatory && !jsonObject.has(fieldName)) {

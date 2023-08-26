@@ -7,17 +7,28 @@ import java.util.Map;
 import org.example.Model.DistributorModel;
 import org.example.Model.ProposalModel;
 import org.example.Model.OfferModel;
+import org.example.config.ConfigLoader;
+import org.example.config.DatabaseManager;
 import org.example.util.ValidationUtils;
 
 public class CreateOfferFunction {
 
-    public String handleRequest(OfferModel offerModel) {
-        Map<String, Object> result = new HashMap<>();
+    private final ConfigLoader configLoader;
 
+    public CreateOfferFunction(ConfigLoader configLoader, DatabaseManager dbManager) {
+        this.configLoader = configLoader;
+    }
+
+    public String handleRequest(OfferModel offerModel) {
+
+        Map<String, Object> result = new HashMap<>();
         ProposalModel proposal = offerModel.getProposal();
         List<DistributorModel> distributors = offerModel.getDistributors();
 
         try {
+            // Carregando as configurações do banco de dados
+            loadDatabaseConfig();
+
             Map<String, String> validationErrors = validateInputValues(distributors, proposal);
 
             if (validationErrors.isEmpty()) {
@@ -35,6 +46,9 @@ public class CreateOfferFunction {
                 result.put("success", false);
                 result.put("validation_errors", validationErrors);
             }
+            /*
+            }
+            */
         } catch (Exception e) {
             handleException(result, e);
         }
@@ -50,5 +64,9 @@ public class CreateOfferFunction {
         e.printStackTrace();
         result.put("success", false);
         result.put("error_message", e.getMessage());
+    }
+
+    private void loadDatabaseConfig() throws Exception {
+        configLoader.load();
     }
 }

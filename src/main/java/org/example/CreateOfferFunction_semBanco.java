@@ -7,17 +7,9 @@ import java.util.Map;
 import org.example.Model.DistributorModel;
 import org.example.Model.ProposalModel;
 import org.example.Model.OfferModel;
-import org.example.config.ConfigLoader;
 import org.example.util.ValidationUtils;
 
-public class CreateOfferFunction_COM_BANCO {
-
-    private final ConfigLoader configLoader;
-
-
-    public CreateOfferFunction_COM_BANCO(ConfigLoader configLoader) {
-        this.configLoader = configLoader;
-    }
+public class CreateOfferFunction_semBanco {
 
     public String handleRequest(OfferModel offerModel) {
         Map<String, Object> result = new HashMap<>();
@@ -26,22 +18,6 @@ public class CreateOfferFunction_COM_BANCO {
         List<DistributorModel> distributors = offerModel.getDistributors();
 
         try {
-            // Carregando as configurações do banco de dados
-            configLoader.load();
-            String dbUser = configLoader.getProperty("database.user");
-            String dbPassword = configLoader.getProperty("database.password");
-            String dbUrl = configLoader.getProperty("database.url");
-
-            // Comente ou descomente conforme necessário para habilitar/desabilitar a conexão com o banco de dados
-            /*
-            OracleDataSource oracleDataSource = new OracleDataSource();
-            oracleDataSource.setURL(dbUrl);
-            oracleDataSource.setUser(dbUser);
-            oracleDataSource.setPassword(dbPassword);
-
-            try (Connection connection = oracleDataSource.getConnection()) {
-            */
-
             Map<String, String> validationErrors = validateInputValues(distributors, proposal);
 
             if (validationErrors.isEmpty()) {
@@ -59,9 +35,6 @@ public class CreateOfferFunction_COM_BANCO {
                 result.put("success", false);
                 result.put("validation_errors", validationErrors);
             }
-            /*
-            }
-            */
         } catch (Exception e) {
             handleException(result, e);
         }
