@@ -4,8 +4,29 @@ version: 0.0.20
 runtime: java17
 build_image: fnproject/fn-java-fdk-build:jdk17-1.0.177
 run_image: fnproject/fn-java-fdk:jre17-1.0.177
-cmd: br.com.b3.template.fn.CreateOfferFunction::handleRequest
+
 triggers:
   - name: create-offer-trigger
     type: http
     source: /create-offer-trigger
+    cmd: br.com.b3.template.fn.CreateOfferFunction::handleRequest
+
+  - name: delete-offer-trigger
+    type: http
+    source: /delete-offer-trigger
+    cmd: br.com.b3.template.fn.DeleteOfferFunction::handleRequest
+
+  - name: update-offer-trigger
+    type: http
+    source: /update-offer-trigger
+    cmd: br.com.b3.template.fn.UpdateOfferFunction::handleRequest
+
+  - name: getById-offer-trigger
+    type: http
+    source: /getById-offer-trigger
+    cmd: br.com.b3.template.fn.GetOfferByIdFunction::handleRequest
+
+  - name: list-offers-trigger
+    type: http
+    source: /list-offers-trigger
+    cmd: br.com.b3.template.fn.ListOffersFunction::handleRequest
