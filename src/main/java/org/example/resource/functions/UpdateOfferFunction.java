@@ -1,7 +1,6 @@
 package org.example.resource.functions;
 
-import org.example.Model.DistributorModel;
-import org.example.Model.ProposalModel;
+import com.google.gson.Gson;
 import org.example.Model.OfferModel;
 import org.example.config.DatabaseManager;
 import org.example.dao.OfferDAO;
@@ -13,43 +12,45 @@ import java.util.Map;
 
 public class UpdateOfferFunction {
 
+    private final DatabaseManager dbManager;
     private final OfferDAO offerDAO;
 
-    public UpdateOfferFunction(DatabaseManager dbManager) {
-        this.offerDAO = new OfferDAO(dbManager);
+    public UpdateOfferFunction(DatabaseManager dbManager, OfferDAO offerDAO) {
+        this.dbManager = dbManager;
+        this.offerDAO = offerDAO;
     }
 
-    public Map<String, Object> handleRequest(OfferModel offerModel) {
+
+    public String handleRequest(OfferModel offerModel) {
         Map<String, Object> result = new HashMap<>();
-        ProposalModel proposal = offerModel.getProposal();
-        List<DistributorModel> distributors = offerModel.getDistributors();
 
         try {
-            Map<String, String> validationErrors = validateInputValues(distributors, proposal);
+            int affectedRows = offerDAO.updateOffer(offerModel);
 
-            if (validationErrors.isEmpty()) {
-                int affectedRows = offerDAO.updateOffer(offerModel);
-
-                if (affectedRows > 0) {
-                    result.put("success", true);
-                    result.put("message", "Record updated successfully.");
-                } else {
-                    result.put("success", false);
-                    result.put("error_message", "Failed to update record.");
-                }
+            if (affectedRows > 0) {
+                result.put("success", true);
+                result.put("message", "Registro inserido com sucesso.");
             } else {
                 result.put("success", false);
-                result.put("validation_errors", validationErrors);
+                result.put("error_message", "Falha ao inserir o registro.");
             }
         } catch (Exception e) {
-            result.put("success", false);
-            result.put("error_message", e.getMessage());
+            handleException(result, e);
         }
 
-        return result;
+        Gson gson = new Gson();
+        return gson.toJson(result);
     }
 
-    private Map<String, String> validateInputValues(List<DistributorModel> distributors, ProposalModel proposal) {
-        return ValidationUtils.getUpdateValidationErrors(distributors, proposal);
+    //Avaliar necessidade de validação
+    private Map<String, String> validateUpdateValues(OfferModel offerModel) {
+        return ValidationUtils.getBusinessValidationErrors(offerModel);
+    }
+
+
+    private void handleException(Map<String, Object> result, Exception e) {
+        e.printStackTrace();
+        result.put("success", false);
+        result.put("error_message", e.getMessage());
     }
 }

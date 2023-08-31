@@ -1,11 +1,8 @@
 package org.example.resource.functions;
 
-import org.example.Model.OfferModel;
 import org.example.config.ConfigLoader;
 import org.example.config.DatabaseManager;
 import org.example.dao.OfferDAO;
-import org.example.util.ValidationUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,42 +16,30 @@ public class DeleteOfferFunction {
         this.offerDAO = new OfferDAO(dbManager);
     }
 
-    public String handleRequest(int offerId) {
-        Map<String, Object> result = new HashMap<>();
+    public String handleRequest(int offerId, String deletedBy) {
+        Map<String, Object> resultado = new HashMap<>();
 
         try {
-            Map<String, String> validationErrors = validateOfferId(offerId);
+            boolean foiAtualizado = offerDAO.offerLogicDeletion(offerId, deletedBy);
 
-            if (validationErrors.isEmpty()) {
-                boolean isDeleted = offerDAO.deleteOffer(offerId);
-
-                if (isDeleted) {
-                    result.put("success", true);
-                    result.put("message", "Record deleted successfully.");
-                } else {
-                    result.put("success", false);
-                    result.put("error_message", "Failed to delete record or record does not exist.");
-                }
+            if (foiAtualizado) {
+                resultado.put("sucesso", true);
+                resultado.put("mensagem", "Registro deletado logicamente com sucesso.");
             } else {
-                result.put("success", false);
-                result.put("validation_errors", validationErrors);
+                resultado.put("sucesso", false);
+                resultado.put("mensagem_de_erro", "Falha ao realizar a deleção lógica ou registro não existe.");
             }
 
         } catch (Exception e) {
-            handleException(result, e);
+            lidarComExcecao(resultado, e);
         }
 
-        return result.toString();
+        return resultado.toString();
     }
 
-    private Map<String, String> validateOfferId(int offerId) {
-        return ValidationUtils.getDeleteValidation(offerId);
-    }
-
-
-    private void handleException(Map<String, Object> result, Exception e) {
+    private void lidarComExcecao(Map<String, Object> resultado, Exception e) {
         e.printStackTrace();
-        result.put("success", false);
-        result.put("error_message", e.getMessage());
+        resultado.put("sucesso", false);
+        resultado.put("mensagem_de_erro", e.getMessage());
     }
 }

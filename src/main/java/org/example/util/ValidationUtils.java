@@ -1,11 +1,7 @@
 package org.example.util;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import org.example.Model.DistributorModel;
-import org.example.Model.ProposalModel;
+import org.example.Model.OfferModel;
 import org.json.JSONObject;
 
 import java.text.ParseException;
@@ -18,10 +14,6 @@ public class ValidationUtils {
         return distributor.length() <= 8;
     }
 
-// Método mais clean, test
-//    public static boolean isValidDateFormat(String date) {
-//        return tryParseDate(date) != null;
-//    }
 
     public static boolean isValidDateFormat(String date) {
         try {
@@ -177,11 +169,11 @@ public class ValidationUtils {
         return mandatoryFields;
     }
 
-    public static Map<String, String> getBusinessValidationErrors(List<DistributorModel> distributorsArray, ProposalModel proposalObject) {
+    public static Map<String, String> getBusinessValidationErrors(OfferModel offerModel) {
         Map<String, String> businessErrors = new HashMap<>();
         Map<String, Boolean> mandatoryFields = getMandatoryFields();
 
-        String proposalJson = new Gson().toJson(proposalObject);
+        String proposalJson = new Gson().toJson(offerModel);
         JSONObject jsonObject = new JSONObject(proposalJson);
 
         mandatoryFields.forEach((fieldName, isMandatory) -> {
@@ -287,36 +279,6 @@ public class ValidationUtils {
         });
 
         return businessErrors;
-    }
-
-
-    public static Map<String, String> getDeleteValidation(int offerId) {
-        Map<String, String> errors = new HashMap<>();
-
-        if (offerId <= 0) {
-            errors.put("offerId", "Offer ID is not valid.");
-        }
-
-        return errors;
-    }
-
-    public static Map<String, String> getUpdateValidationErrors(List<DistributorModel> distributors, ProposalModel proposal) {
-        Map<String, String> errors = new HashMap<>();
-
-        // Aqui você pode adicionar suas validações específicas.
-        // Por exemplo:
-
-        if (proposal == null) {
-            errors.put("proposal", "Proposal cannot be null.");
-        }
-
-        if (distributors == null || distributors.isEmpty()) {
-            errors.put("distributors", "At least one distributor is required.");
-        }
-
-        // Continue com as validações conforme necessário...
-
-        return errors;
     }
 
 }
